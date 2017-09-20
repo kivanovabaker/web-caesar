@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from caesar import rotate_string
 
 app = Flask(__name__)
@@ -38,5 +38,26 @@ form = """
 @app.route("/")
 def index():
     return form
+
+def is_integer(num):
+    try:
+        int(num)
+        return True
+    except ValueError:
+        return False
+
+@app.route("/", methods=['POST'])
+def encrypt():
+    rot = request.form['rot']
+    text = request.form['text']
+    rot_error =""
+    
+    if not is_integer(rot):
+        rot_error = "Please enter a valid integer."
+    else:
+        rot = int(rot)
+
+    encrypted_text = rotate_string(text,rot)
+    return "<h1>" + encrypted_text + "</h1>"
 
 app.run()
